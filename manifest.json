@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "TransLang Search",
+  "description": "Adds language switch buttons below the search bar and translate selected text.",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage"
+  ]
+}
