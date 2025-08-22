@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,29 +21,62 @@
         h3 {
             margin-bottom: 6px;
         }
-        
-        form {
-            margin-bottom: 20px;
-        }
+
         label {
             font-size: 16px;
         }
-        input[submit] {
-            padding: 3px 8px;
+        input[type="submit"] {
+            font-size: 0.8rem;
+            padding: 1px 3px;
+        }
+
+        section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 5px 0 20px 0;
+        }
+        .clear-lang {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: #e0e0ff;
+            color: #333;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: default;
+        }
+        .clear-lang span {
+            color: #666;
+            font-weight: bold;
+            margin-left: 6px;
+            padding: 0 4px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .clear-lang span:hover {
+            background: #ccc;
+            color: #000;
         }
     </style>
 </head>
+
 <body>
     <h3>Adicionar opções de línguas na pesquisa do Google</h3>
-    <form id="add-lang">
-        <label for="add-lang-button">adicionar língua:</label>
-        <select name="add-lang-button" id="add-lang-button">
+    <form id="ad-lang">
+        <label for="ad-lang-button">adicionar língua:</label>
+        <select name="ad-lang-button" id="ad-lang-button">
             <option value="pt-br">Portugês (Brasil)</option>
             <option value="en">Inglês</option>
             <option value="jp">Japonês</option>
         </select>
-        <input type="submit">
+        <input type="submit" value="adicionar">
     </form>
+    <section>
+    </section>
+
     <h3>Escolher língua de tradução à texto selecionado</h3>
     <form id="translate-lang">
         <label for="translation-lang">adicionar língua:</label>
@@ -51,8 +85,9 @@
             <option value="en">Inglês</option>
             <option value="jp">Japonês</option>
         </select>
-        <input type="submit">
+        <input type="submit" value="confirmar">
     </form>
     <script src="popup.js"></script>
 </body>
+
 </html>
