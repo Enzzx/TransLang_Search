@@ -7,13 +7,13 @@ addLangForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const langBtn = document.querySelector("#ad-lang-button").value
 
-   chrome.storage.sync.get({"lang-buttons": []}, (result) => {
+   chrome.storage.local.get({"lang-buttons": []}, (result) => {
         const langs = result["lang-buttons"]
         if (!langs.some(l => l == langBtn)) {
             langs.push(langBtn)
         }
 
-        chrome.storage.sync.set({"lang-buttons": langs}, () => {
+        chrome.storage.local.set({"lang-buttons": langs}, () => {
             console.log(`${langBtn} adicionado à lista`)
             langButtons()
         })
@@ -24,7 +24,7 @@ translateLangForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const translationLang = document.querySelector("#translation-lang").value
 
-    chrome.storage.sync.set({"translate-lang": translationLang}, () => {
+    chrome.storage.local.set({"translate-lang": translationLang}, () => {
         console.log(`língua de tradução mudada para ${translationLang}`)
     })
 })
@@ -34,10 +34,10 @@ function langButtons() {
     const btnSection = document.querySelector("section")
     btnSection.innerHTML = ''
 
-    chrome.storage.sync.get({ "lang-buttons": [] }, (result) => {
+    chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
         const langs = result["lang-buttons"]
 
-        langs.forEach((lang) => {
+        langs.forEach(lang => {
             let etiquet = document.createElement("div")
             etiquet.className = "clear-lang"
             etiquet.textContent = lang
@@ -47,7 +47,7 @@ function langButtons() {
 
             remove.addEventListener("click", () => {
                 const updated = langs.filter(l => l !== lang)
-                chrome.storage.sync.set({ "lang-buttons": updated }, langButtons)
+                chrome.storage.local.set({ "lang-buttons": updated }, langButtons)
             })
 
             etiquet.appendChild(remove)
@@ -57,7 +57,7 @@ function langButtons() {
 }
 
 function defaultLang() {
-    chrome.storage.sync.get({"translate-lang": "pt-br"}, (result) => {
+    chrome.storage.local.get({"translate-lang": "pt-br"}, (result) => {
         const select = document.querySelector("#translation-lang")
         select.value = result["translate-lang"]
     })

@@ -8,5 +8,12 @@
   },
   "permissions": [
     "storage"
-  ]
+  ],
+  "content_scripts": [
+   {
+     "matches": ["https://www.google.com/*"],
+     "js": ["content-script.js"],
+     "css": ["content-script-style.css"]
+   }
+ ]
 }

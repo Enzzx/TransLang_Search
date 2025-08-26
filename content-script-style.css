@@ -1,0 +1,25 @@
+.extension-div {
+    z-index: inherit;
+    grid-column: 2 /-1;
+    display: flex;
+    gap: 6px;
+    margin: 10px 0;
+    padding-left: 10px;
+}
+.extension-div span {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    background: #e6ffff;
+    color: #333;
+    width: 55px;
+    padding: 6px 0;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.extension-div span:hover {
+    background: #d7eded;
+}
+
+.minidiv {
+    top: 10px !important
+}
