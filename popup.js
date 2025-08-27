@@ -14,7 +14,6 @@ addLangForm.addEventListener("submit", (e) => {
         }
 
         chrome.storage.local.set({"lang-buttons": langs}, () => {
-            console.log(`${langBtn} adicionado à lista`)
             langButtons()
         })
     })
