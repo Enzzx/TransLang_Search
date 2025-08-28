@@ -6,9 +6,12 @@
   "action": {
     "default_popup": "popup.html"
   },
+  "background": { "service_worker": "background.js" },
   "permissions": [
-    "storage"
+    "storage",
+    "scripting"
   ],
+  "host_permissions": [ "https://api.mymemory.translated.net/*" ],
   "content_scripts": [
    {
      "matches": ["https://www.google.com/*"],

@@ -8,7 +8,6 @@ firstNode.style.height = "110px"
 const toolsBar = document.querySelector("[data-sd-cp]")
 toolsBar.firstElementChild.style.marginTop = "20px"
 
-
 const extensionDiv = document.createElement("div")
 extensionDiv.className = 'extension-div'
 
@@ -19,35 +18,34 @@ chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
         let etiquet = document.createElement("span")
         etiquet.textContent = lang
 
-        etiquet.addEventListener("click", () => {
+        etiquet.addEventListener("click", async () => {
             console.log("clicou")
             let query = document.querySelector("textarea").value
-            const head = {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+            try {
+                chrome.runtime.sendMessage({
+                    action: "translate",
+                    query: query,
+                    targetLang: lang
+                }, (response) => {
+                    if (response.success) {
+                        const translatedQuery = response.translatedText
+                        let restOfSearch = window.location.search
+                        restOfSearch = restOfSearch.substring(restOfSearch.indexOf('&sca_esv='))
+                        //console.log(`consulta traduzida: ${translatedQuery}\nresto da query original: ${restOfSearch}\host: ${window.location.hostname}`)
+
+                        window.location.href = `${window.location.hostname}/search?q=${translatedQuery}${restOfSearch}`
+                    } else {
+                        console.error('Erro na tradução:', response.error)
+                    }
+                })
+            } catch (e) {
+                console.error('Erro:', e)
             }
-
-            chrome.storage.local.get({ "translate-lang": "pt-br" }, async (result) => {
-                try {
-                    const req = await fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=en|${result["translate-lang"]}`, head)
-                    const res = await req.json()
-                    console.log(res)
-                    const translatedQuery = res.responseData.translatedText
-                    let restOfSearch = window.location.search
-                    restOfSearch = restOfSearch.substring(restOfSearch.indexOf('&sca_esv='))
-
-                    window.location.href = `${window.location}/search?q=${translatedQuery}${restOfSearch}`
-                } catch (e) {
-                    throw e
-                }
-            })
         })
 
         extensionDiv.appendChild(etiquet)
-        console.log(`língua ${lang} adicionada`)
     })
 })
-
 
 searchForm.appendChild(extensionDiv)
 console.log("adicionado extensionDiv")

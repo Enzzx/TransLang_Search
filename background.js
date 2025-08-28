@@ -1,17 +1,16 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "translate") {
+    if (message.action == "translate") {
         (async () => {
             try {
-                const site = "https://api.mymemory.translated.net";
-                const url = `${site}/get?q=${encodeURIComponent(message.query)}&langpair=en|${message.targetLang}`;
-                console.log(url)
-                const res = await fetch(url);
-                const data = await res.json();
-                sendResponse({ success: true, translatedText: data.responseData.translatedText });
-            } catch (error) {
-                sendResponse({ success: false, error: error.message });
+                const originalLang = message.targetLang == "pt-br" ? "en" : "pt-br"
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(message.query)}&langpair=${originalLang}|${message.targetLang}`
+                const req = await fetch(url)
+                const res = await req.json()
+                sendResponse({ success: true, translatedText: res.responseData.translatedText })
+            } catch (e) {
+                sendResponse({ success: false, error: e.message })
             }
-        })();
-        return true;
+        })()
+        return true
     }
-});
+})
