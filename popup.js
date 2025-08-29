@@ -1,19 +1,32 @@
+import { langDict } from "./utils/languagetags.js"
+
 const addLangForm = document.querySelector("#ad-lang")
 const translateLangForm = document.querySelector("#translate-lang")
 langButtons()
 defaultLang()
 
+console.log(langDict)
+
+const select = document.querySelector("#translation-lang")
+Object.entries(langDict).forEach(([cod, [enName, orName]]) => {
+    const option = document.createElement("option")
+    option.value = cod
+    option.textContent = enName + (orName ? ` (${orName})` : "")
+    select.appendChild(option)
+})
+
+
 addLangForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const langBtn = document.querySelector("#ad-lang-button").value
 
-   chrome.storage.local.get({"lang-buttons": []}, (result) => {
+    chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
         const langs = result["lang-buttons"]
         if (!langs.some(l => l == langBtn)) {
             langs.push(langBtn)
         }
 
-        chrome.storage.local.set({"lang-buttons": langs}, () => {
+        chrome.storage.local.set({ "lang-buttons": langs }, () => {
             langButtons()
         })
     })
@@ -23,7 +36,7 @@ translateLangForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const translationLang = document.querySelector("#translation-lang").value
 
-    chrome.storage.local.set({"translate-lang": translationLang}, () => {
+    chrome.storage.local.set({ "translate-lang": translationLang }, () => {
         console.log(`língua de tradução mudada para ${translationLang}`)
     })
 })
@@ -56,7 +69,7 @@ function langButtons() {
 }
 
 function defaultLang() {
-    chrome.storage.local.get({"translate-lang": "pt-br"}, (result) => {
+    chrome.storage.local.get({ "translate-lang": "pt-br" }, (result) => {
         const select = document.querySelector("#translation-lang")
         select.value = result["translate-lang"]
     })

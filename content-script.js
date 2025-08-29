@@ -30,10 +30,9 @@ chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
                     if (response.success) {
                         const translatedQuery = response.translatedText
                         let restOfSearch = window.location.search
-                        restOfSearch = restOfSearch.substring(restOfSearch.indexOf('&sca_esv='))
-                        //console.log(`consulta traduzida: ${translatedQuery}\nresto da query original: ${restOfSearch}\host: ${window.location.hostname}`)
+                        restOfSearch = restOfSearch.substring(restOfSearch.indexOf('&'))
 
-                        window.location.href = `${window.location.hostname}/search?q=${translatedQuery}${restOfSearch}`
+                        window.location.href = `search?q=${translatedQuery}${restOfSearch}`
                     } else {
                         console.error('Erro na tradução:', response.error)
                     }
