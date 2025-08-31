@@ -6,13 +6,17 @@ langButtons()
 defaultLang()
 
 console.log(langDict)
+let OrdlangDict = Object.entries(langDict).sort((a, b) => a[0].localeCompare(b[0]))
+OrdlangDict = Object.fromEntries(OrdlangDict)
 
-const select = document.querySelector("#translation-lang")
+const selectButton = document.querySelector("#ad-lang-button")
+const selectLang = document.querySelector("#translation-lang")
 Object.entries(langDict).forEach(([cod, [enName, orName]]) => {
     const option = document.createElement("option")
     option.value = cod
-    option.textContent = enName + (orName ? ` (${orName})` : "")
-    select.appendChild(option)
+    option.textContent = enName + (orName ? ` / (${orName})` : "")
+    selectButton.appendChild(option)
+    selectLang.appendChild(option.cloneNode(true))
 })
 
 

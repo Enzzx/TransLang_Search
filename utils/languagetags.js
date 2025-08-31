@@ -716,6 +716,7 @@
     "es-MX": ["Mexican Spanish", "Español mexicano"],
     "es-CO": ["Colombian Spanish", "Español colombiano"],
     "es-ES": ["Spanish (Spain)", "Español (España)"],
+    "pt-BR":  ["Portuguese (Brazil)",   "Português (Brasil)"],
 
     "eo":   ["Esperanto",   "Esperanto"],
     "ia":   ["Interlingua", "Interlingua"],
