@@ -19,10 +19,14 @@
    {
      "matches": ["https://www.google.com/*"],
      "js": [
-       "libs/franc-min.umd.js",
-        "content-script.js"
+        "libs/franc-min.umd.js",
+        "content-script-search.js"
       ],
-     "css": ["content-script-style.css"]
+     "css": ["content-script-search.css"]
+   },
+   {
+    "matches": ["*://*/*"],
+    "js": ["content-script-universal.js"]
    }
  ]
 }

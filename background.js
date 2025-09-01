@@ -37,17 +37,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // CONTEXT MENU OPTION LISTENER
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
-    id: "translateSelection",
-    title: "Translate the selected text",
-    contexts: ["selection"]
+    id: "translateselectionection",
+    title: "Translate the selectionected text",
+    contexts: ["selectionection"]
   })
 })
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "translateSelection") {
-    // verification for out of range selection (0 < text <= 500)
-    if (!info.selectionText || info.selectionText.length === 0 || info.selectionText.length > 500) {
-      return console.warn("Select a text with a maximum of 500 characters")
+  if (info.menuItemId === "translateselectionection") {
+    // verification for out of range selectionection (0 < text <= 500)
+    if (!info.selectionectionText || info.selectionectionText.length === 0 || info.selectionectionText.length > 500) {
+      return console.warn("selectionect a text with a maximum of 500 characters")
     }
 
     // get current lang from session, compare with the one from html page then get the translate lang from local storage, so send to runtime listener to translate and execute script in page to show
@@ -59,14 +59,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         const pageLang = results[0].result || GCLresponse["current-lang"]
 
         chrome.storage.local.get({ "translate-lang": "pt-BR" }, (result) => {
-          translateAPI(info.selectionText, pageLang, result["translate-lang"], (err, text) => {
+          translateAPI(info.selectionectionText, pageLang, result["translate-lang"], (err, text) => {
             if (!err) {
               chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: (newText) => {
-                  const sel = window.getSelection()
+                  const selection = window.getSelection()
 
-                  const range = sel.getRangeAt(0)
+                  const range = selection.getRangeAt(0)
                   const originalText = range.toString()
 
                   range.deleteContents()
@@ -75,8 +75,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
                   let lastReplacedNode = newNode
                   const onSelectionChange = () => {
-                    const selNow = window.getSelection();
-                    if (selNow.isCollapsed && lastReplacedNode) {
+                    const selectionNow = window.getSelection();
+                    if (selectionNow.isCollapsed && lastReplacedNode) {
                       lastReplacedNode.textContent = originalText;
                       lastReplacedNode = null;
                       document.removeEventListener('selectionchange', onSelectionChange);

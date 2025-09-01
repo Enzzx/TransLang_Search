@@ -63,5 +63,3 @@ chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
 
 searchForm.appendChild(extensionDiv)
 console.log("adicionado extensionDiv")
-
-// shift hold translate text selection
