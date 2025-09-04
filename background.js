@@ -31,6 +31,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })
     return true
   }
+
+  // call dictionary function and send to content script
+  if (message.action === "dictionary") {
+    dictionaryAPI(message.word, message.sourceLang, (err, text) => {
+      if (err) {
+        sendResponse({ success: false, error: err })
+      } else {
+        sendResponse({ success: true, html: text })
+      }
+    })
+    return true
+  }
 })
 
 
@@ -47,7 +59,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "translateselectionection") {
     // verification for out of range selectionection (0 < text <= 500)
     if (!info.selectionectionText || info.selectionectionText.length === 0 || info.selectionectionText.length > 500) {
-      return console.warn("selectionect a text with a maximum of 500 characters")
+      return console.warn("select a text with a maximum of 500 characters")
     }
 
     // get current lang from session, compare with the one from html page then get the translate lang from local storage, so send to runtime listener to translate and execute script in page to show
@@ -88,7 +100,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
               })
 
             } else {
-              console.error("Erro na tradução: " + err)
+              console.error("Translation error: " + err)
             }
           })
         })
@@ -109,7 +121,34 @@ async function translateAPI(query, sourceLang, targetLang, callback) {
     } else {
       callback(null, res.responseData.translatedText)
     }
+
   } catch (e) {
     throw e
   }
+}
+
+// DICTIONARY SEARCH FUNCTION AND SEND BACK AS CALLBACK
+function dictionaryAPI(word, sourceLang, callback) {
+  translateAPI(word, sourceLang, "pt-br", async (err, translatedWord) => {
+    if (!err) {
+      try {
+        const url = `https://pt.wiktionary.org/api/rest_v1/page/html/${encodeURIComponent(translatedWord)}`
+        const req = await fetch(url)
+        const contentType = req.headers.get("content-type") || ""
+        
+        if (contentType.includes("json")) {
+          const res = await req.json()
+          callback(res.messageTranslations[0])
+        } else{
+          const res = await req.text()
+          callback(null, res)
+        }
+
+      } catch (e) {
+        throw e
+      }
+    } else {
+      return err
+    }
+  })
 }
