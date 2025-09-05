@@ -51,7 +51,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "translateselectionection",
     title: "Translate the selectionected text",
-    contexts: ["selectionection"]
+    contexts: ["selection"]
   })
 })
 
@@ -132,7 +132,7 @@ function dictionaryAPI(word, sourceLang, callback) {
   translateAPI(word, sourceLang, "pt-br", async (err, translatedWord) => {
     if (!err) {
       try {
-        const url = `https://pt.wiktionary.org/api/rest_v1/page/html/${encodeURIComponent(translatedWord)}`
+        const url = `https://pt.wiktionary.org/api/rest_v1/page/html/${decodeURIComponent(translatedWord).toLowerCase()}`
         const req = await fetch(url)
         const contentType = req.headers.get("content-type") || ""
         
@@ -148,7 +148,7 @@ function dictionaryAPI(word, sourceLang, callback) {
         throw e
       }
     } else {
-      return err
+      callback(err)
     }
   })
 }
