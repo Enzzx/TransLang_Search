@@ -26,7 +26,8 @@
    },
    {
     "matches": ["*://*/*"],
-    "js": ["content-script-universal.js"]
+    "js": ["content-script-universal.js"],
+    "css": ["content-script-universal.css"]
    }
  ]
 }

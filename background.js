@@ -49,16 +49,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // CONTEXT MENU OPTION LISTENER
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
-    id: "translateselectionection",
-    title: "Translate the selectionected text",
+    id: "translateSelection",
+    title: "Translate the selected text",
     contexts: ["selection"]
   })
 })
 
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "meaningWord",
+    title: "Get the meaning of the word",
+    contexts: ["selection"]
+  })
+})
+
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "translateselectionection") {
-    // verification for out of range selectionection (0 < text <= 500)
-    if (!info.selectionectionText || info.selectionectionText.length === 0 || info.selectionectionText.length > 500) {
+  if (info.menuItemId === "translateSelection") {
+    // verification for out of range selection (0 < text <= 500)
+    if (!info.selectionText || info.selectionText.length === 0 || info.selectionText.length > 500) {
       return console.warn("select a text with a maximum of 500 characters")
     }
 
@@ -71,7 +80,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         const pageLang = results[0].result || GCLresponse["current-lang"]
 
         chrome.storage.local.get({ "translate-lang": "pt-BR" }, (result) => {
-          translateAPI(info.selectionectionText, pageLang, result["translate-lang"], (err, text) => {
+          translateAPI(info.selectionText, pageLang, result["translate-lang"], (err, text) => {
             if (!err) {
               chrome.scripting.executeScript({
                 target: { tabId: tab.id },
@@ -87,14 +96,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
                   let lastReplacedNode = newNode
                   const onSelectionChange = () => {
-                    const selectionNow = window.getSelection();
+                    const selectionNow = window.getSelection()
                     if (selectionNow.isCollapsed && lastReplacedNode) {
-                      lastReplacedNode.textContent = originalText;
-                      lastReplacedNode = null;
-                      document.removeEventListener('selectionchange', onSelectionChange);
+                      lastReplacedNode.textContent = originalText
+                      lastReplacedNode = null
+                      document.removeEventListener('selectionchange', onSelectionChange)
                     }
-                  };
-                  document.addEventListener('selectionchange', onSelectionChange);
+                  }
+                  document.addEventListener('selectionchange', onSelectionChange)
                 },
                 args: [text]
               })
@@ -102,6 +111,60 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             } else {
               console.error("Translation error: " + err)
             }
+          })
+        })
+      })
+    })
+  }
+
+  if (info.menuItemId === "meaningWord") {
+    const word = info.selectionText.trim()
+
+    if (!word || word.includes(" "))
+      return console.warn("Select only a single word")
+
+
+    chrome.storage.session.get({ "current-lang": "pt-BR" }, (GCLresponse) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => document.documentElement.lang
+      }, (results) => {
+        let lang = results[0].result || GCLresponse["current-lang"]
+        lang = lang.startsWith("pt") ? "en" : lang
+
+        dictionaryAPI(word, lang, (err, html) => {
+          if (err) {
+            return console.error("Dictionary error: " + err)
+          }
+
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: (html) => {
+              const parser = new DOMParser()
+              const doc = parser.parseFromString(html, "text/html")
+
+              doc.querySelectorAll("*").forEach(el => {
+                while (el.attributes.length > 0) {
+                  el.removeAttribute(el.attributes[0].name)
+                }
+              })
+
+              const list = doc.querySelector("ol")
+              if (!list) return
+
+              list.classList.add("word-desc")
+              document.querySelectorAll(".word-desc").forEach(el => el.remove())
+              document.body.appendChild(list)
+              const onSelectionChange = () => {
+                const selectionNow = window.getSelection()
+                if (selectionNow.isCollapsed && list) {
+                  list.remove()
+                  document.removeEventListener('selectionchange', onSelectionChange)
+                }
+              }
+              document.addEventListener('selectionchange', onSelectionChange)
+            },
+            args: [html]
           })
         })
       })
@@ -135,11 +198,11 @@ function dictionaryAPI(word, sourceLang, callback) {
         const url = `https://pt.wiktionary.org/api/rest_v1/page/html/${decodeURIComponent(translatedWord).toLowerCase()}`
         const req = await fetch(url)
         const contentType = req.headers.get("content-type") || ""
-        
+
         if (contentType.includes("json")) {
           const res = await req.json()
           callback(res.messageTranslations[0])
-        } else{
+        } else {
           const res = await req.text()
           callback(null, res)
         }

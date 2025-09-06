@@ -2,6 +2,7 @@ const keysPressed = new Set()
 let originalText = null
 let lastInsertedNode = null
 let searchExecuted = false
+let adjectivesList = null
 
 window.lastOriginalText = null
 window.lastTranslation = null
@@ -34,6 +35,7 @@ document.addEventListener("keydown", (e) => {
         chrome.runtime.sendMessage({ action: "get-current-lang" }, (response) => {
             lang = lang || response.currentLang
             chrome.storage.local.get({ "translate-lang": "pt-BR" }, (result) => {
+                lang = lang.toLowerCase() == result["translate-lang"].toLowerCase() ? "en" : lang
                 chrome.runtime.sendMessage({
                     action: "translate",
                     query: originalText,
@@ -65,7 +67,6 @@ document.addEventListener("keydown", (e) => {
             return console.warn("Select a only word")
 
         let lang = document.documentElement.lang
-        console.log(lang)
         chrome.runtime.sendMessage({ action: "get-current-lang" }, (response) => {
             lang = lang || response.currentLang
             lang = lang.startsWith("pt") ? "en" : lang
@@ -76,10 +77,8 @@ document.addEventListener("keydown", (e) => {
             }, (response) => {
                 if (response.success && !selection.isCollapsed) {
                     const htmlStripped = stripAttributes(response.html)
-                    const adjectivesList = htmlStripped.querySelector("ol")
-                    console.log(adjectivesList)
+                    adjectivesList = htmlStripped.querySelector("ol")
                     adjectivesList.classList.add("word-desc")
-                    adjectivesList.style.backgroundColor = "skyblue"
                     window.document.body.appendChild(adjectivesList)
 
                 } else {
@@ -91,10 +90,15 @@ document.addEventListener("keydown", (e) => {
 })
 
 document.addEventListener("keyup", (e) => {
-    keysPressed.delete(e.key)
+    keysPressed.clear()
 
     if ((e.key === "Shift" || e.key.toLowerCase() === "t") && lastInsertedNode && originalText) {
         lastInsertedNode.textContent = originalText
+    }
+
+    if ((e.key === "Shift" || e.key.toLowerCase() === "t") && adjectivesList != null) {
+        window.document.body.removeChild(adjectivesList)
+        adjectivesList = null
     }
 
     searchExecuted = false
