@@ -2,6 +2,7 @@ const searchForm = document.querySelector("#searchform")
 const firstNode = searchForm.firstElementChild
 //const lastNode = searchForm.lastElementChild
 
+
 // DOM styling
 searchForm.style.top = "5px"
 firstNode.style.height = "110px"
@@ -24,11 +25,12 @@ chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
 
         // reload page with search query translated to button language 
         etiquet.addEventListener("click", async () => {
-            /* alert(franc(query))
-            if (franc(query) == "por") {
-                chrome.runtime.sendMessage({ action: "set-current-lang", lang: "pt-BR" })
-                alert("detectada pesquisa em poretugues")
-            } */
+            const langDetected = franc.franc(query)
+            alert(`De: ${langDetected}\tPara: ${isoMap[langDetected]}`)
+            if (isoMap[langDetected] != "und") {
+                chrome.runtime.sendMessage({ action: "set-current-lang", lang: isoMap[langDetected] })
+            }
+            
             chrome.runtime.sendMessage({ action: "get-current-lang" }, (response) => {
                 const currentLang = response.currentLang || "pt-BR"
 
@@ -41,11 +43,9 @@ chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
                     }, (response) => {
                         if (response.success) {
                             const translatedQuery = response.translatedText
-                            let restOfSearch = window.location.search
-                            restOfSearch = restOfSearch.substring(restOfSearch.indexOf('&'))
 
                             chrome.runtime.sendMessage({ action: "set-current-lang", lang })
-                            window.location.href = `search?q=${translatedQuery}${restOfSearch}`
+                            window.location.href = `search?q=${translatedQuery}`
 
                         } else {
                             alert('Erro na tradução:', response.error)

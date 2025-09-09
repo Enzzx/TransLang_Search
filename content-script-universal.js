@@ -22,7 +22,6 @@ document.addEventListener("keydown", (e) => {
         const selectedText = range.toString()
 
         if (selectedText === window.lastOriginalText && window.lastTranslation) {
-            //console.log("Tradução reutilizada: " + window.lastTranslation)
             range.deleteContents()
             lastInsertedNode = document.createTextNode(window.lastTranslation)
             range.insertNode(lastInsertedNode)
