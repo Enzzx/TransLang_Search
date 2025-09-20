@@ -55,4 +55,4 @@ The project highlights problem-solving through clean design choices: non-intrusi
 
 While built as a student project, the structure leaves room for future improvements such as additional APIs, offline caching, or broader language support. **TransLang Search** ultimately reflects the core CS50 values of creativity, rigor, and real-world application.  
 
-Link: [Project presentation video](https://youtube.com)
+Link to CS50 final project video presentation: [Project presentation video](https://youtu.be/RK6ZfaG_lmE)
