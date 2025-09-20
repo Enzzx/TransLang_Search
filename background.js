@@ -192,26 +192,30 @@ async function translateAPI(query, sourceLang, targetLang, callback) {
 
 // DICTIONARY SEARCH FUNCTION AND SEND BACK AS CALLBACK
 function dictionaryAPI(word, sourceLang, callback) {
-  translateAPI(word, sourceLang, "pt-br", async (err, translatedWord) => {
-    if (!err) {
-      try {
-        const url = `https://pt.wiktionary.org/api/rest_v1/page/html/${decodeURIComponent(translatedWord).toLowerCase()}`
-        const req = await fetch(url)
-        const contentType = req.headers.get("content-type") || ""
+  chrome.storage.local.get({ "translate-lang": "pt-br" }, (result) => {
+    const targetLang = result["translate-lang"]
 
-        if (contentType.includes("json")) {
-          const res = await req.json()
-          callback(res.messageTranslations[0])
-        } else {
-          const res = await req.text()
-          callback(null, res)
+    translateAPI(word, sourceLang, targetLang, async (err, translatedWord) => {
+      if (!err) {
+        try {
+          const url = `https://${targetLang.split('-')[0]}.wiktionary.org/api/rest_v1/page/html/${decodeURIComponent(translatedWord.replace(/[.,:;?!]+$/, '')).toLowerCase()}`
+          const req = await fetch(url)
+          const contentType = req.headers.get("content-type") || ""
+          
+          if (contentType.includes("json")) {
+            const res = await req.json()
+            callback(res.messageTranslations[0])
+          } else {
+            const res = await req.text()
+            callback(null, res)
+          }
+          
+        } catch (e) {
+          throw e
         }
-
-      } catch (e) {
-        throw e
+      } else {
+        callback(err)
       }
-    } else {
-      callback(err)
-    }
+    })
   })
 }

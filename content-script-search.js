@@ -26,8 +26,8 @@ chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
         // reload page with search query translated to button language 
         etiquet.addEventListener("click", async () => {
             const langDetected = franc.franc(query)
-            alert(`De: ${langDetected}\tPara: ${isoMap[langDetected]}`)
             if (isoMap[langDetected] != "und") {
+                //alert(`De: ${langDetected}\tPara: ${isoMap[langDetected]}`)
                 chrome.runtime.sendMessage({ action: "set-current-lang", lang: isoMap[langDetected] })
             }
             
