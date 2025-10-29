@@ -3,7 +3,7 @@
     grid-column: 2 /-1;
     display: flex;
     gap: 6px;
-    margin: 10px 0;
+    margin: 15px 0;
     padding-left: 10px;
 }
 .extension-div span {

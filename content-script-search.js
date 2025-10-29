@@ -4,11 +4,11 @@ const firstNode = searchForm.firstElementChild
 
 
 // DOM styling
-searchForm.style.top = "5px"
-firstNode.style.height = "110px"
+//searchForm.style.top = "5px"
+//firstNode.style.height = "110px"
 
 const toolsBar = document.querySelector("[data-sd-cp]")
-toolsBar.firstElementChild.style.marginTop = "20px"
+toolsBar.style.marginTop = "30px"
 
 const extensionDiv = document.createElement("div")
 extensionDiv.className = 'extension-div'
@@ -21,10 +21,10 @@ chrome.storage.local.get({ "lang-buttons": [] }, (result) => {
     langs.forEach(lang => {
         let etiquet = document.createElement("span")
         etiquet.textContent = lang
-        let query = document.querySelector("textarea").value
-
+        
         // reload page with search query translated to button language 
         etiquet.addEventListener("click", async () => {
+            let query = document.querySelector("textarea").value
             const langDetected = franc.franc(query)
             if (isoMap[langDetected] != "und") {
                 //alert(`De: ${langDetected}\tPara: ${isoMap[langDetected]}`)
